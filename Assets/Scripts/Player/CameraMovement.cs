@@ -22,7 +22,7 @@ public class CameraMovement : MonoBehaviour
         cameraTransform.position = playerTransform.position + offset;
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         float yaw = mouseDelta.x * sensitivity;
         float pitchDelta = -mouseDelta.y * sensitivity;
