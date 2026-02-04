@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3022043265472072473}
   - component: {fileID: 4283843961938951586}
   - component: {fileID: -4445387907979526169}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Orange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 7443090360797512478}
   - component: {fileID: 695326840905944843}
   - component: {fileID: 6112110064591067791}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Orange
   m_TagString: Untagged
   m_Icon: {fileID: 0}

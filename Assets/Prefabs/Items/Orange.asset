@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemName: Orange
   prefab: {fileID: 242823572217682191, guid: ba795ea643822414e80279e7c9bcbedd, type: 3}
+  price: 0.5

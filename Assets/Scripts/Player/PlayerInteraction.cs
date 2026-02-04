@@ -10,6 +10,7 @@ public class PlayerInteraction : MonoBehaviour
     public Inventory inventory;
     public Image handIcon;
     public SellPoint sellPoint;
+    public PlayerMoney playerMoney;
 
     void Update()
     {
@@ -25,6 +26,7 @@ public class PlayerInteraction : MonoBehaviour
             if (
                 hit.collider.GetComponent<Grabbable>() != null
                 || hit.collider.GetComponent<SellPoint>() != null
+                || hit.collider.GetComponent<UpgradePoint>() != null
             )
             {
                 handIcon.enabled = true;
@@ -59,7 +61,17 @@ public class PlayerInteraction : MonoBehaviour
             SellPoint sellPoint = hit.collider.GetComponent<SellPoint>();
             if (sellPoint != null)
             {
-                sellPoint.SellItems(inventory);
+                if (!sellPoint.SellItems(inventory))
+                {
+                    ShakeHand();
+                }
+                return;
+            }
+
+            UpgradePoint upgradePoint = hit.collider.GetComponent<UpgradePoint>();
+            if (upgradePoint != null)
+            {
+                upgradePoint.TryPurchase(playerMoney);
                 return;
             }
         }
@@ -67,7 +79,14 @@ public class PlayerInteraction : MonoBehaviour
 
     private void PickupItem(Grabbable grabbable)
     {
+        if (inventory.GetTotalItemCount() >= inventory.maxSize)
+        {
+            ShakeHand();
+            return;
+        }
+
         grabbable.GetComponent<Collider>().enabled = false;
+        grabbable.NotifySpawner();
         grabbable
             .transform.DOMove(inventory.transform.position, 0.5f)
             .OnComplete(() =>
@@ -75,6 +94,23 @@ public class PlayerInteraction : MonoBehaviour
                 inventory.AddItem(grabbable.GetItem());
                 grabbable.gameObject.SetActive(false);
                 Destroy(grabbable.gameObject);
+            });
+    }
+
+    private void ShakeHand()
+    {
+        handIcon
+            .transform.DOShakePosition(
+                0.3f,
+                strength: 5f,
+                vibrato: 10,
+                randomness: 1f,
+                snapping: false,
+                fadeOut: true
+            )
+            .OnComplete(() =>
+            {
+                handIcon.transform.localPosition = Vector3.zero;
             });
     }
 }

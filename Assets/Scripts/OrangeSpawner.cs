@@ -29,8 +29,20 @@ public class OrangeSpawner : MonoBehaviour
 
         if (Physics.Raycast(rayOrigin, -randomDirection, out RaycastHit hit, raycastDistance * 2))
         {
-            Instantiate(Orange.prefab, hit.point, Quaternion.identity);
+            GameObject orangeObject = Instantiate(Orange.prefab, hit.point, Quaternion.identity);
+
+            Grabbable grabbable = orangeObject.GetComponent<Grabbable>();
+            if (grabbable != null)
+            {
+                grabbable.spawner = this;
+            }
+
             currentOranges++;
         }
+    }
+
+    public void OrangeCollected()
+    {
+        currentOranges = Mathf.Max(0, currentOranges - 1);
     }
 }

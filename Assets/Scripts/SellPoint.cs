@@ -5,8 +5,26 @@ using UnityEngine;
 public class SellPoint : MonoBehaviour
 {
     public PlayerMoney playerMoney;
+    private bool isSelling = false;
 
-    public void SellItems(Inventory inventory)
+    public bool SellItems(Inventory inventory)
+    {
+        if (isSelling)
+        {
+            return false;
+        }
+
+        if (inventory.GetAllItems().Count == 0)
+        {
+            return false;
+        }
+
+        isSelling = true;
+        StartCoroutine(ProcessSale(inventory));
+        return true;
+    }
+
+    private IEnumerator ProcessSale(Inventory inventory)
     {
         float totalEarnings = 0f;
 
@@ -15,7 +33,6 @@ public class SellPoint : MonoBehaviour
             Item item = itemEntry.Key;
             float itemCount = itemEntry.Value;
             totalEarnings += item.price * itemCount;
-
             for (int i = 0; i < itemCount; i++)
             {
                 StartCoroutine(AnimationItemSell(item, inventory));
@@ -23,6 +40,10 @@ public class SellPoint : MonoBehaviour
         }
 
         playerMoney.AddMoney(totalEarnings);
+
+        yield return new WaitForSeconds(0.6f);
+
+        isSelling = false;
     }
 
     private IEnumerator AnimationItemSell(Item item, Inventory inventory)

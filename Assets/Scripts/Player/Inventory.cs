@@ -8,7 +8,12 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(Item item)
     {
-        if (items.Count >= maxSize && !items.ContainsKey(item))
+        if (GetTotalItemCount() >= maxSize && !items.ContainsKey(item))
+        {
+            return;
+        }
+
+        if (items.ContainsKey(item))
         {
             items[item]++;
         }
@@ -16,6 +21,17 @@ public class Inventory : MonoBehaviour
         {
             items[item] = 1;
         }
+    }
+
+    public int GetTotalItemCount()
+    {
+        int total = 0;
+        foreach (var count in items.Values)
+        {
+            total += count;
+        }
+
+        return total;
     }
 
     public int GetItemCount(Item item)
