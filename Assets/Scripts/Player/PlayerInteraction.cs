@@ -12,6 +12,8 @@ public class PlayerInteraction : MonoBehaviour
     public SellPoint sellPoint;
     public PlayerMoney playerMoney;
 
+    private int pendingItems = 0;
+
     void Update()
     {
         CheckForInteractable();
@@ -27,6 +29,7 @@ public class PlayerInteraction : MonoBehaviour
                 hit.collider.GetComponent<Grabbable>() != null
                 || hit.collider.GetComponent<SellPoint>() != null
                 || hit.collider.GetComponent<UpgradePoint>() != null
+                || hit.collider.GetComponent<Crate>() != null
             )
             {
                 handIcon.enabled = true;
@@ -71,7 +74,31 @@ public class PlayerInteraction : MonoBehaviour
             UpgradePoint upgradePoint = hit.collider.GetComponent<UpgradePoint>();
             if (upgradePoint != null)
             {
-                upgradePoint.TryPurchase(playerMoney);
+                if (!upgradePoint.TryPurchase(playerMoney))
+                {
+                    ShakeHand();
+                }
+                return;
+            }
+
+            Crate crate = hit.collider.GetComponent<Crate>();
+            if (crate != null)
+            {
+                if (inventory.GetTotalItemCount() + pendingItems >= inventory.maxSize)
+                {
+                    ShakeHand();
+                    return;
+                }
+
+                Grabbable item = crate.GetItem();
+                if (item != null)
+                {
+                    PickupItemFromCrate(item);
+                }
+                else
+                {
+                    ShakeHand();
+                }
                 return;
             }
         }
@@ -79,18 +106,33 @@ public class PlayerInteraction : MonoBehaviour
 
     private void PickupItem(Grabbable grabbable)
     {
-        if (inventory.GetTotalItemCount() >= inventory.maxSize)
+        if (inventory.GetTotalItemCount() + pendingItems >= inventory.maxSize)
         {
             ShakeHand();
             return;
         }
-
+        pendingItems++;
         grabbable.GetComponent<Collider>().enabled = false;
-        grabbable.NotifySpawner();
         grabbable
             .transform.DOMove(inventory.transform.position, 0.5f)
             .OnComplete(() =>
             {
+                pendingItems--;
+                inventory.AddItem(grabbable.GetItem());
+                grabbable.gameObject.SetActive(false);
+                grabbable.NotifySpawner();
+            });
+    }
+
+    private void PickupItemFromCrate(Grabbable grabbable)
+    {
+        pendingItems++;
+        grabbable.GetComponent<Collider>().enabled = false;
+        grabbable
+            .transform.DOMove(inventory.transform.position, 0.5f)
+            .OnComplete(() =>
+            {
+                pendingItems--;
                 inventory.AddItem(grabbable.GetItem());
                 grabbable.gameObject.SetActive(false);
                 Destroy(grabbable.gameObject);
@@ -102,7 +144,7 @@ public class PlayerInteraction : MonoBehaviour
         handIcon
             .transform.DOShakePosition(
                 0.3f,
-                strength: 5f,
+                strength: 10f,
                 vibrato: 10,
                 randomness: 1f,
                 snapping: false,

@@ -6,6 +6,9 @@ public class Inventory : MonoBehaviour
     public int maxSize = 1;
     public Dictionary<Item, int> items = new Dictionary<Item, int>();
 
+    public delegate void InventoryChangedDelegate(float newAmount);
+    public event InventoryChangedDelegate OnInventoryChanged;
+
     public void AddItem(Item item)
     {
         if (GetTotalItemCount() >= maxSize && !items.ContainsKey(item))
@@ -21,6 +24,7 @@ public class Inventory : MonoBehaviour
         {
             items[item] = 1;
         }
+        OnInventoryChanged?.Invoke(GetTotalItemCount());
     }
 
     public int GetTotalItemCount()
@@ -54,6 +58,7 @@ public class Inventory : MonoBehaviour
                 items.Remove(item);
             }
         }
+        OnInventoryChanged?.Invoke(GetTotalItemCount());
     }
 
     public void RemoveKey(Item item)
@@ -62,5 +67,6 @@ public class Inventory : MonoBehaviour
         {
             items.Remove(item);
         }
+        OnInventoryChanged?.Invoke(GetTotalItemCount());
     }
 }

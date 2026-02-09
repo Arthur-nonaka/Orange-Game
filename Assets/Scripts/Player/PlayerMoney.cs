@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMoney : MonoBehaviour
 {
@@ -6,6 +7,14 @@ public class PlayerMoney : MonoBehaviour
 
     public delegate void MoneyChangedDelegate(float newAmount);
     public event MoneyChangedDelegate OnMoneyChanged;
+
+    public void SetHack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            AddMoney(1000f);
+        }
+    }
 
     public void AddMoney(float value)
     {

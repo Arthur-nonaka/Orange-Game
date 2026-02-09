@@ -32,10 +32,12 @@ public class SellPoint : MonoBehaviour
         {
             Item item = itemEntry.Key;
             float itemCount = itemEntry.Value;
-            totalEarnings += item.price * itemCount;
+            float finalPrice = item.price * (1 + item.priceMultiplier);
+            totalEarnings += finalPrice * itemCount;
             for (int i = 0; i < itemCount; i++)
             {
                 StartCoroutine(AnimationItemSell(item, inventory));
+                yield return new WaitForSeconds(0.1f);
             }
         }
 

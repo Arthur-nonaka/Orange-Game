@@ -3,7 +3,7 @@ using UnityEngine;
 public class Grabbable : MonoBehaviour
 {
     public Item item;
-    public OrangeSpawner spawner;
+    public Spawner spawner;
 
     public Item GetItem()
     {
@@ -12,6 +12,6 @@ public class Grabbable : MonoBehaviour
 
     public void NotifySpawner()
     {
-        spawner.OrangeCollected();
+        spawner.ItemCollected(this.gameObject);
     }
 }

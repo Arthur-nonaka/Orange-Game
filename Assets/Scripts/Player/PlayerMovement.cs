@@ -6,6 +6,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private Vector2 movementInput;
 
+    //Unlockables
+    public bool sprintUnlocked = false;
+
     [SerializeField]
     private float speed = 300f;
 
@@ -42,7 +45,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetSprint(InputAction.CallbackContext context)
     {
-        if (context.performed && IsGrounded())
+        if (!sprintUnlocked)
+            return;
+
+        if (context.performed)
         {
             speed *= 2f;
         }
