@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -13,6 +14,8 @@ public class PlayerInteraction : MonoBehaviour
     public PlayerMoney playerMoney;
 
     private int pendingItems = 0;
+    private GameObject currentHighlightedObject;
+    private Outline currentOutline;
 
     void Update()
     {
@@ -33,11 +36,37 @@ public class PlayerInteraction : MonoBehaviour
             )
             {
                 handIcon.enabled = true;
+                if (currentHighlightedObject != hit.collider.gameObject)
+                {
+                    if (currentOutline != null)
+                    {
+                        currentOutline.enabled = false;
+                    }
+
+                    currentHighlightedObject = hit.collider.gameObject;
+                    currentOutline = currentHighlightedObject.GetComponent<Outline>();
+
+                    if (currentOutline != null)
+                    {
+                        currentOutline.enabled = true;
+                    }
+                }
                 return;
             }
         }
 
         handIcon.enabled = false;
+        DisableCurrentOutline();
+    }
+
+    private void DisableCurrentOutline()
+    {
+        if (currentOutline != null)
+        {
+            currentOutline.enabled = false;
+        }
+        currentHighlightedObject = null;
+        currentOutline = null;
     }
 
     public void SetInteract(InputAction.CallbackContext context)
