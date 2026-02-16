@@ -5,8 +5,8 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody rb;
     private Vector2 movementInput;
+    public Transform head;
 
-    //Unlockables
     public bool sprintUnlocked = false;
 
     [SerializeField]
@@ -22,6 +22,14 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        Vector3 headForward = head.forward;
+        headForward.y = 0;
+
+        if (headForward.sqrMagnitude > 0.001f)
+        {
+            transform.rotation = Quaternion.LookRotation(headForward);
+        }
+
         Vector3 movement = new Vector3(movementInput.x, 0.0f, movementInput.y);
         Vector3 localMovement = transform.TransformDirection(movement);
         Vector3 velocity = localMovement * speed;

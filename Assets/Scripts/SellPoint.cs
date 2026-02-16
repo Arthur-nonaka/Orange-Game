@@ -20,6 +20,7 @@ public class SellPoint : MonoBehaviour
         }
 
         isSelling = true;
+        SoundManager.PlaySound(SoundType.SELL);
         StartCoroutine(ProcessSale(inventory));
         return true;
     }

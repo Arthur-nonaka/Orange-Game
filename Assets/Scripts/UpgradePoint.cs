@@ -157,22 +157,34 @@ public class UpgradePoint : MonoBehaviour
 
         if (upgradeType == UpgradeType.Discovery)
         {
-            incrementText.text = discoveries.IsDiscoveryUnlocked(discoveryType)
-                ? "UNLOCKED"
-                : "LOCKED";
+            if (incrementText != null)
+            {
+                incrementText.text = discoveries.IsDiscoveryUnlocked(discoveryType)
+                    ? "UNLOCKED"
+                    : "LOCKED";
+            }
         }
         else if (upgradeType == UpgradeType.OrangeRate)
         {
-            incrementText.text =
-                $"{GetCurrentIncrementFloat():F2}s -> {GetNextIncrementFloat():F2}s";
+            if (incrementText != null)
+            {
+                incrementText.text =
+                    $"{GetCurrentIncrementFloat():F2}s -> {GetNextIncrementFloat():F2}s";
+            }
         }
         else if (upgradeType == UpgradeType.IncreaseValue)
         {
-            incrementText.text = $"{GetCurrentPercent():P0} -> {GetNextPercent():P0}";
+            if (incrementText != null)
+            {
+                incrementText.text = $"{GetCurrentPercent():P0} -> {GetNextPercent():P0}";
+            }
         }
         else
         {
-            incrementText.text = $"{GetCurrentIncrementInt()} -> {GetNextIncrementInt()}";
+            if (incrementText != null)
+            {
+                incrementText.text = $"{GetCurrentIncrementInt()} -> {GetNextIncrementInt()}";
+            }
         }
     }
 }

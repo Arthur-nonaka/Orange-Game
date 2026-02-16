@@ -7,6 +7,7 @@ public enum SoundType
     GRAB,
     SELL,
     BUY,
+    CLICK,
 }
 
 [RequireComponent(typeof(AudioSource))]
@@ -27,12 +28,35 @@ public class SoundManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public static void PlaySound(SoundType type)
+    public static void PlaySound(SoundType type, float volume = 1f)
     {
-        AudioClip[] clips = _instance.soundList[(int)type].Sounds;
-        AudioClip randomClip = clips[UnityEngine.Random.Range(0, clips.Length)];
+        Audio[] clips = _instance.soundList[(int)type].Sounds;
+        AudioClip randomClip = GetRandomClip(clips);
 
-        _instance.audioSource.PlayOneShot(randomClip);
+        _instance.audioSource.PlayOneShot(randomClip, volume);
+    }
+
+    private static AudioClip GetRandomClip(Audio[] clips)
+    {
+        float totalWeight = 0f;
+        foreach (Audio audio in clips)
+        {
+            totalWeight += audio.chance;
+        }
+
+        float randomValue = UnityEngine.Random.Range(0f, totalWeight);
+
+        float cumulativeWeight = 0f;
+        foreach (Audio audio in clips)
+        {
+            cumulativeWeight += audio.chance;
+            if (randomValue <= cumulativeWeight)
+            {
+                return audio.sound;
+            }
+        }
+
+        return clips[0].sound;
     }
 
 #if UNITY_EDITOR
@@ -52,7 +76,7 @@ public class SoundManager : MonoBehaviour
 [Serializable]
 public struct SoundList
 {
-    public AudioClip[] Sounds
+    public Audio[] Sounds
     {
         get => soundList;
     }
@@ -61,5 +85,12 @@ public struct SoundList
     public string name;
 
     [SerializeField]
-    private AudioClip[] soundList;
+    private Audio[] soundList;
+}
+
+[Serializable]
+public struct Audio
+{
+    public AudioClip sound;
+    public float chance;
 }

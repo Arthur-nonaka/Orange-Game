@@ -12,6 +12,7 @@ public class PlayerInteraction : MonoBehaviour
     public Image handIcon;
     public SellPoint sellPoint;
     public PlayerMoney playerMoney;
+    public LayerMask ignoreMask;
 
     private int pendingItems = 0;
     private GameObject currentHighlightedObject;
@@ -26,7 +27,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance))
+        LayerMask layerMask = ~ignoreMask;
+
+        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance, layerMask))
         {
             if (
                 hit.collider.GetComponent<Grabbable>() != null
@@ -50,6 +53,12 @@ public class PlayerInteraction : MonoBehaviour
                     {
                         currentOutline.enabled = true;
                     }
+                    Canvas canvas =
+                        currentHighlightedObject.transform.parent?.GetComponentInChildren<Canvas>();
+                    if (canvas != null)
+                    {
+                        canvas.enabled = true;
+                    }
                 }
                 return;
             }
@@ -64,6 +73,15 @@ public class PlayerInteraction : MonoBehaviour
         if (currentOutline != null)
         {
             currentOutline.enabled = false;
+        }
+        if (currentHighlightedObject != null)
+        {
+            Canvas canvas =
+                currentHighlightedObject.transform.parent?.GetComponentInChildren<Canvas>();
+            if (canvas != null)
+            {
+                canvas.enabled = false;
+            }
         }
         currentHighlightedObject = null;
         currentOutline = null;
@@ -81,7 +99,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance))
+        LayerMask layerMask = ~ignoreMask;
+
+        if (Physics.Raycast(ray, out RaycastHit hit, grabDistance, layerMask))
         {
             Grabbable grabbable = hit.collider.GetComponent<Grabbable>();
             if (grabbable != null)
@@ -103,10 +123,17 @@ public class PlayerInteraction : MonoBehaviour
             UpgradePoint upgradePoint = hit.collider.GetComponent<UpgradePoint>();
             if (upgradePoint != null)
             {
+                if (upgradePoint.GetComponent<Animator>() != null)
+                {
+                    upgradePoint.GetComponent<Animator>().SetTrigger("Click");
+                    SoundManager.PlaySound(SoundType.CLICK, 0.04f);
+                }
+
                 if (!upgradePoint.TryPurchase(playerMoney))
                 {
                     ShakeHand();
                 }
+
                 return;
             }
 
@@ -150,6 +177,7 @@ public class PlayerInteraction : MonoBehaviour
                 inventory.AddItem(grabbable.GetItem());
                 grabbable.gameObject.SetActive(false);
                 grabbable.NotifySpawner();
+                SoundManager.PlaySound(SoundType.GRAB, 0.5f);
             });
     }
 
@@ -165,6 +193,7 @@ public class PlayerInteraction : MonoBehaviour
                 inventory.AddItem(grabbable.GetItem());
                 grabbable.gameObject.SetActive(false);
                 Destroy(grabbable.gameObject);
+                SoundManager.PlaySound(SoundType.GRAB, 0.5f);
             });
     }
 
