@@ -28,11 +28,19 @@ public class UpgradePoint : MonoBehaviour
     [Header("UI")]
     public TextMeshProUGUI costText;
     public TextMeshProUGUI incrementText;
+    public TextMeshProUGUI titleText;
+    public string upgradeTitle;
 
     void Start()
     {
         UpdateUI();
         ResetUpgrade();
+
+        if (discoveries != null || upgrades != null)
+        {
+            discoveries = GameObject.FindGameObjectWithTag("Upgrades").GetComponent<Discoveries>();
+            upgrades = GameObject.FindGameObjectWithTag("Upgrades").GetComponent<Upgrades>();
+        }
     }
 
     private void ResetUpgrade()
@@ -147,6 +155,11 @@ public class UpgradePoint : MonoBehaviour
 
     public void UpdateUI()
     {
+        if (titleText != null)
+        {
+            titleText.text = upgradeTitle;
+        }
+        
         if (IsMaxLevel())
         {
             costText.text = "MAX";

@@ -59,6 +59,15 @@ public class PlayerInteraction : MonoBehaviour
                     {
                         canvas.enabled = true;
                     }
+                    else
+                    {
+                        canvas =
+                            currentHighlightedObject.transform.parent?.parent?.GetComponentInChildren<Canvas>();
+                        if (canvas != null)
+                        {
+                            canvas.enabled = true;
+                        }
+                    }
                 }
                 return;
             }
@@ -81,6 +90,15 @@ public class PlayerInteraction : MonoBehaviour
             if (canvas != null)
             {
                 canvas.enabled = false;
+            }
+            else
+            {
+                canvas =
+                    currentHighlightedObject.transform.parent?.parent?.GetComponentInChildren<Canvas>();
+                if (canvas != null)
+                {
+                    canvas.enabled = false;
+                }
             }
         }
         currentHighlightedObject = null;

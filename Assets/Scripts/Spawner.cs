@@ -13,7 +13,9 @@ public abstract class Spawner : MonoBehaviour
 
     [Header("Spawns")]
     public GameObject CatSpawn;
+    public GameObject CatInitialSpawn;
     public GameObject CrateSpawn;
+    public OpenFence fence;
 
     public List<GameObject> spawnedItems = new List<GameObject>();
     protected float timer;
