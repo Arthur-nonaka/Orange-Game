@@ -9,6 +9,7 @@ public enum SoundType
     BUY,
     CLICK,
     DOOR,
+    ERROR,
 }
 
 [RequireComponent(typeof(AudioSource))]

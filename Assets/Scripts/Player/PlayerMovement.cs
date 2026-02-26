@@ -13,11 +13,21 @@ public class PlayerMovement : MonoBehaviour
     private float speed = 300f;
 
     [SerializeField]
+    private float footstepInterval = 0.5f;
+
+    [SerializeField]
+    private float sprintFootstepInterval = 0.3f;
+
+    private float footstepTimer = 0f;
+    private bool isSprinting = false;
+
+    [SerializeField]
     private float jumpForce = 5f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        TerrainUpgradeManager.Instance.ResetToBasic();
     }
 
     void FixedUpdate()
@@ -36,6 +46,33 @@ public class PlayerMovement : MonoBehaviour
 
         velocity.y = rb.linearVelocity.y;
         rb.linearVelocity = velocity;
+
+        HandleFootsteps();
+    }
+
+    private void HandleFootsteps()
+    {
+        bool isMoving = movementInput.sqrMagnitude > 0.01f;
+
+        if (isMoving && IsGrounded())
+        {
+            footstepTimer -= Time.fixedDeltaTime;
+
+            if (footstepTimer <= 0f)
+            {
+                PlayFootstepSound();
+                footstepTimer = isSprinting ? sprintFootstepInterval : footstepInterval;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f;
+        }
+    }
+
+    private void PlayFootstepSound()
+    {
+        SoundManager.PlaySound(SoundType.FOOTSTEP, 0.25f);
     }
 
     public void SetMove(InputAction.CallbackContext context)
@@ -58,10 +95,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (context.performed)
         {
+            isSprinting = true;
             speed *= 2f;
         }
         else if (context.canceled)
         {
+            isSprinting = false;
             speed /= 2f;
         }
     }

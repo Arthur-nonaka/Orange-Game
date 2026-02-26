@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -28,15 +29,30 @@ public class GathererCat : MonoBehaviour
         }
     }
 
-    public void WalkToPosition(Vector3 targetPosition)
+    public void WalkToPosition(Vector3 targetPosition, Quaternion targetRotation, Action close)
     {
         float distance = Vector3.Distance(transform.position, targetPosition);
         float duration = distance / walkSpeed;
 
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        direction.y = 0;
+
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.DORotateQuaternion(lookRotation, 0.3f);
+        }
+
         transform
             .DOMove(targetPosition, duration)
             .SetEase(Ease.Linear)
-            .OnComplete(() => hasReachedPosition = true);
+            .OnComplete(() =>
+            {
+                hasReachedPosition = true;
+                transform.rotation = targetRotation;
+                TerrainUpgradeManager.Instance.ApplyUpgrade("Cat");
+                close?.Invoke();
+            });
     }
 
     private void PerformAction()

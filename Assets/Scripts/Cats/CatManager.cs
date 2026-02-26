@@ -8,15 +8,15 @@ public class CatManager : MonoBehaviour
 
     public void SpawnGathererCat(Spawner spawner)
     {
-        Vector3 initialPosition =
+        Transform initialPosition =
             spawner.CatInitialSpawn != null
-                ? spawner.CatInitialSpawn.transform.position
-                : spawner.CatSpawn.transform.position;
+                ? spawner.CatInitialSpawn.transform
+                : spawner.CatSpawn.transform;
 
         GathererCat cat = Instantiate(
             gathererCatPrefab,
-            initialPosition,
-            spawner.CatSpawn.transform.rotation
+            initialPosition.position,
+            initialPosition.rotation
         );
 
         Crate crate = Instantiate(
@@ -30,11 +30,21 @@ public class CatManager : MonoBehaviour
 
         if (spawner.CatInitialSpawn != null && spawner.fence != null)
         {
-            spawner.fence.Open(() => cat.WalkToPosition(spawner.CatSpawn.transform.position));
+            spawner.fence.Open(() =>
+                cat.WalkToPosition(
+                    spawner.CatSpawn.transform.position,
+                    spawner.CatSpawn.transform.rotation,
+                    spawner.fence.Close
+                )
+            );
         }
         else if (spawner.CatInitialSpawn != null)
         {
-            cat.WalkToPosition(spawner.CatSpawn.transform.position);
+            cat.WalkToPosition(
+                spawner.CatSpawn.transform.position,
+                spawner.CatSpawn.transform.rotation,
+                spawner.fence.Close
+            );
         }
     }
 }

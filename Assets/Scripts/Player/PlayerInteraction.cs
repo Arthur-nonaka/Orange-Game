@@ -144,7 +144,7 @@ public class PlayerInteraction : MonoBehaviour
                 if (upgradePoint.GetComponent<Animator>() != null)
                 {
                     upgradePoint.GetComponent<Animator>().SetTrigger("Click");
-                    SoundManager.PlaySound(SoundType.CLICK, 0.04f);
+                    SoundManager.PlaySound(SoundType.CLICK, 0.5f);
                 }
 
                 if (!upgradePoint.TryPurchase(playerMoney))
@@ -217,6 +217,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void ShakeHand()
     {
+        SoundManager.PlaySound(SoundType.ERROR, 0.1f);
         handIcon
             .transform.DOShakePosition(
                 0.3f,

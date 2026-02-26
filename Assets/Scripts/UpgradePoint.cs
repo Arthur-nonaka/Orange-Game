@@ -36,7 +36,7 @@ public class UpgradePoint : MonoBehaviour
         UpdateUI();
         ResetUpgrade();
 
-        if (discoveries != null || upgrades != null)
+        if (discoveries == null || upgrades == null)
         {
             discoveries = GameObject.FindGameObjectWithTag("Upgrades").GetComponent<Discoveries>();
             upgrades = GameObject.FindGameObjectWithTag("Upgrades").GetComponent<Upgrades>();
@@ -159,7 +159,7 @@ public class UpgradePoint : MonoBehaviour
         {
             titleText.text = upgradeTitle;
         }
-        
+
         if (IsMaxLevel())
         {
             costText.text = "MAX";
@@ -170,12 +170,12 @@ public class UpgradePoint : MonoBehaviour
 
         if (upgradeType == UpgradeType.Discovery)
         {
-            if (incrementText != null)
-            {
-                incrementText.text = discoveries.IsDiscoveryUnlocked(discoveryType)
-                    ? "UNLOCKED"
-                    : "LOCKED";
-            }
+            // if (incrementText != null)
+            // {
+            //     incrementText.text = discoveries.IsDiscoveryUnlocked(discoveryType)
+            //         ? "UNLOCKED"
+            //         : "LOCKED";
+            // }
         }
         else if (upgradeType == UpgradeType.OrangeRate)
         {
